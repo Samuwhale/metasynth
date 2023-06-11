@@ -238,6 +238,19 @@ class MetaDataset():
         meta_vars = [MetaVar.from_dict(d) for d in self_dict["vars"]]
         return cls(meta_vars, n_rows)
 
+    def print(self):
+        """Prints the MetaDataSet in an easy to read format."""
+        output = f"Rows: {self.n_rows}\n"
+        output += f"Columns: {self.n_columns}\n"
+
+        for var in self.meta_vars:
+            output += f"\nVariable: {var.name}\n"
+            output += f"Type: {var.var_type}\n"
+            output += f"Description: {var.description}\n"
+            output += f"Distribution: {var.distribution}\n"
+
+        print(output)
+
     def synthesize(self, n: int) -> pl.DataFrame:
         """Create a synthetic pandas dataframe.
 
@@ -266,3 +279,4 @@ def _jsonify(data):
     if isinstance(data, np.ndarray):
         return _jsonify(data.tolist())
     return data
+
