@@ -1,4 +1,4 @@
-"""Conversion of pandas dataframes to MetaSynth datasets."""   # pylint: disable=invalid-name
+"""Conversion of pandas dataframes to MetaSynth datasets."""  # pylint: disable=invalid-name
 
 from __future__ import annotations
 
@@ -51,7 +51,7 @@ class MetaDataset():
                        df: pl.DataFrame,
                        spec: Optional[dict[str, dict]] = None,
                        dist_providers: Union[str, list[str], BaseDistributionProvider,
-                                             list[BaseDistributionProvider]] = "builtin",
+                       list[BaseDistributionProvider]] = "builtin",
                        privacy: Optional[BasePrivacy] = None):
         """Create dataset from a Pandas dataframe.
 
@@ -169,10 +169,10 @@ class MetaDataset():
 
     def __str__(self) -> str:
         """Create a readable string that shows the variables."""
-        cur_str = "# Rows: "+str(self.n_rows)+"\n"
-        cur_str += "# Columns: "+str(self.n_columns)+"\n"
+        cur_str = "# Rows: " + str(self.n_rows) + "\n"
+        cur_str += "# Columns: " + str(self.n_columns) + "\n"
         for var in self.meta_vars:
-            cur_str += "\n"+str(var)+"\n"
+            cur_str += "\n" + str(var) + "\n"
         return cur_str
 
     @property
@@ -238,19 +238,6 @@ class MetaDataset():
         meta_vars = [MetaVar.from_dict(d) for d in self_dict["vars"]]
         return cls(meta_vars, n_rows)
 
-    def print(self):
-        """Prints the MetaDataSet in an easy to read format."""
-        output = f"Rows: {self.n_rows}\n"
-        output += f"Columns: {self.n_columns}\n"
-
-        for var in self.meta_vars:
-            output += f"\nVariable: {var.name}\n"
-            output += f"Type: {var.var_type}\n"
-            output += f"Description: {var.description}\n"
-            output += f"Distribution: {var.distribution}\n"
-
-        print(output)
-
     def synthesize(self, n: int) -> pl.DataFrame:
         """Create a synthetic pandas dataframe.
 
@@ -267,6 +254,23 @@ class MetaDataset():
         synth_dict = {var.name: var.draw_series(n) for var in self.meta_vars}
         return pl.DataFrame(synth_dict)
 
+    def preview_output(self):
+        """Prints the MetaDataSet as it would be output to JSON."""
+        pretty_data = _jsonify(self.to_dict())
+        output = json.dumps(pretty_data, indent=4)
+        print(output)
+
+    @property
+    def formatted(self) -> str:
+        """Returns an easy to read formatted string for the MetaDataSet."""
+        vars_formatted = "\n".join(f"Column {i + 1}: {var.formatted}" for i, var in enumerate(self.meta_vars))
+        return (
+            f"# Rows: {self.n_rows}\n"
+            f"# Columns: {self.n_columns}\n\n"
+            f"{vars_formatted}\n"
+        )
+
+
 
 def _jsonify(data):
     if isinstance(data, (list, tuple)):
@@ -279,4 +283,3 @@ def _jsonify(data):
     if isinstance(data, np.ndarray):
         return _jsonify(data.tolist())
     return data
-

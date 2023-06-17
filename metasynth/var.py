@@ -62,7 +62,7 @@ class MetaVar():
             series = _to_polars(series)
             self.name = series.name
             if prop_missing is None:
-                self.prop_missing = (len(series) - len(series.drop_nulls()))/len(series)
+                self.prop_missing = (len(series) - len(series.drop_nulls())) / len(series)
             self.dtype = str(series.dtype)
 
         self.series = series
@@ -257,6 +257,20 @@ class MetaVar():
             distribution=dist,
             prop_missing=var_dict["prop_missing"], dtype=var_dict["dtype"],
             description=var_dict.get("description", None)
+        )
+
+    @property
+    def formatted(self) -> str:
+        """Returns an easy to read formatted string for the MetaVar."""
+        description = f'Description: "{self.description}"\n' if self.description else ""
+        distribution_formatted = "\n".join("\t" + line for line in self.distribution.formatted.split("\n"))
+        return (
+            f'"{self.name}"\n'
+            f'{description}'
+            f'- Variable Type: {self.var_type}\n'
+            f'- Data Type: {self.dtype}\n'
+            f'- Prop. Missing: {self.prop_missing}\n'
+            f'- Distribution:\n{distribution_formatted}\n'
         )
 
 

@@ -149,6 +149,18 @@ class BaseDistribution(ABC):
         """Get a distribution with default parameters."""
         return cls()
 
+    @property
+    def formatted(self) -> str:
+        """Returns an easy to read formatted string for the distribution."""
+        params_formatted = "\n".join(f"\t- {param}: {value}" for param, value in self._param_dict().items())
+        return (
+            f"- Type: {self.implements}\n"
+            f"- Provenance: {self.provenance}\n"
+            f"- Parameters:\n"
+            f"{params_formatted}\n"
+        )
+
+
 
 class CoreDistribution():  # pylint: disable=too-few-public-methods
     """Distributions belonging to the core set."""
@@ -248,8 +260,8 @@ class ScipyDistribution(BaseDistribution):
     def information_criterion(self, values):
         vals = self._to_series(values)
         if len(vals) == 0:
-            return 2*self.n_par
+            return 2 * self.n_par
         return self._information_criterion(vals)
 
     def _information_criterion(self, values):
-        return 2*self.n_par - 2*np.sum(self.dist.logpdf(values))
+        return 2 * self.n_par - 2 * np.sum(self.dist.logpdf(values))
