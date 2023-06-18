@@ -152,14 +152,14 @@ class BaseDistribution(ABC):
     @property
     def formatted(self) -> str:
         """Returns an easy to read formatted string for the distribution."""
-        params_formatted = "\n".join(f"\t- {param}: {value}" for param, value in self._param_dict().items())
+        params_formatted = "\n".join(
+            f"\t- {param}: {value}" for param, value in self._param_dict().items())
         return (
             f"- Type: {self.implements}\n"
             f"- Provenance: {self.provenance}\n"
             f"- Parameters:\n"
             f"{params_formatted}\n"
         )
-
 
 
 class CoreDistribution():  # pylint: disable=too-few-public-methods

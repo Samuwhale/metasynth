@@ -263,7 +263,8 @@ class MetaVar():
     def formatted(self) -> str:
         """Returns an easy to read formatted string for the MetaVar."""
         description = f'Description: "{self.description}"\n' if self.description else ""
-        distribution_formatted = "\n".join("\t" + line for line in self.distribution.formatted.split("\n"))
+        distribution_formatted = "\n".join(
+            "\t" + line for line in self.distribution.formatted.split("\n"))
         return (
             f'"{self.name}"\n'
             f'{description}'

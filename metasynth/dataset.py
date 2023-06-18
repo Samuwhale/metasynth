@@ -263,13 +263,13 @@ class MetaDataset():
     @property
     def formatted(self) -> str:
         """Returns an easy to read formatted string for the MetaDataSet."""
-        vars_formatted = "\n".join(f"Column {i + 1}: {var.formatted}" for i, var in enumerate(self.meta_vars))
+        vars_formatted = "\n".join(
+            f"Column {i + 1}: {var.formatted}" for i, var in enumerate(self.meta_vars))
         return (
             f"# Rows: {self.n_rows}\n"
             f"# Columns: {self.n_columns}\n\n"
             f"{vars_formatted}\n"
         )
-
 
 
 def _jsonify(data):
