@@ -106,7 +106,7 @@ class BaseDistribution(ABC):
                         "type": "object",
                         "properties": cls._param_schema(),
                         "required": list(cls.default_distribution()._param_dict())
-                        }
+                    }
             },
             "required": ["implements", "provenance", "class_name", "parameters"]
         }
@@ -154,7 +154,7 @@ class BaseDistribution(ABC):
 
     @property
     def formatted(self) -> str:
-        """Returns an easy to read formatted string for the distribution."""
+        """Return an easy to read formatted string for the distribution."""
         params_formatted = "\n".join(
             f"\t- {param}: {value}" for param,
             value in self._param_dict().items()
