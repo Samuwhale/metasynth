@@ -36,8 +36,10 @@ class MetaDataset():
         Package that supplies the distributions.
     """
 
-    def __init__(self, meta_vars: List[MetaVar],
-                 n_rows: Optional[int] = None):
+    def __init__(
+            self, meta_vars: List[MetaVar],
+            n_rows: Optional[int] = None
+    ):
         self.meta_vars = meta_vars
         self.n_rows = n_rows
 
@@ -47,12 +49,15 @@ class MetaDataset():
         return len(self.meta_vars)
 
     @classmethod
-    def from_dataframe(cls,
-                       df: pl.DataFrame,
-                       spec: Optional[dict[str, dict]] = None,
-                       dist_providers: Union[str, list[str], BaseDistributionProvider,
-                       list[BaseDistributionProvider]] = "builtin",
-                       privacy: Optional[BasePrivacy] = None):
+    def from_dataframe(
+            cls,
+            df: pl.DataFrame,
+            spec: Optional[dict[str, dict]] = None,
+            dist_providers:
+            Union[str, list[str], BaseDistributionProvider,
+                  list[BaseDistributionProvider]] = "builtin",
+            privacy: Optional[BasePrivacy] = None
+    ):
         """Create dataset from a Pandas dataframe.
 
         The pandas dataframe should be formatted already with the correct
@@ -130,10 +135,18 @@ class MetaDataset():
             cur_privacy = col_spec.pop("privacy", privacy)
             fit_kwargs = col_spec.pop("fit_kwargs", {})
             if len(col_spec) != 0:
-                raise ValueError(f"Unknown spec items '{col_spec}' for variable '{col_name}'.")
-            var = MetaVar.detect(series, description=description, prop_missing=prop_missing)
-            var.fit(dist=dist, dist_providers=dist_providers, unique=unq, privacy=cur_privacy,
-                    fit_kwargs=fit_kwargs)
+                raise ValueError(
+                    f"Unknown spec items '{col_spec}' for variable '{col_name}'.")
+            var = MetaVar.detect(
+                series,
+                description=description,
+                prop_missing=prop_missing)
+            var.fit(
+                dist=dist,
+                dist_providers=dist_providers,
+                unique=unq,
+                privacy=cur_privacy,
+                fit_kwargs=fit_kwargs)
 
             all_vars.append(var)
 
@@ -182,7 +195,8 @@ class MetaDataset():
                 if var.name is not None and var.description is not None}
 
     @descriptions.setter
-    def descriptions(self, new_descriptions: Union[dict[str, str], Sequence[str]]):
+    def descriptions(
+            self, new_descriptions: Union[dict[str, str], Sequence[str]]):
         if isinstance(new_descriptions, dict):
             for var_name, new_desc in new_descriptions.items():
                 self[var_name].description = new_desc
@@ -193,7 +207,8 @@ class MetaDataset():
             for i_desc, new_desc in enumerate(new_descriptions):
                 self[i_desc].description = new_desc
 
-    def to_json(self, fp: Union[pathlib.Path, str], validate: bool = True) -> None:
+    def to_json(self, fp: Union[pathlib.Path, str],
+                validate: bool = True) -> None:
         """Write the MetaSynth dataset to a JSON file.
 
         Optional validation against a JSON schema included in the package.
@@ -212,7 +227,8 @@ class MetaDataset():
             json.dump(self_dict, f, indent=4)
 
     @classmethod
-    def from_json(cls, fp: Union[pathlib.Path, str], validate: bool = True) -> MetaDataset:
+    def from_json(cls, fp: Union[pathlib.Path, str],
+                  validate: bool = True) -> MetaDataset:
         """Read a MetaSynth dataset from a JSON file.
 
         Parameters
@@ -231,7 +247,10 @@ class MetaDataset():
             self_dict = json.load(f)
 
         if validate:
-            schema = json.loads(read_text("metasynth.schema", "generative_metadata_format.json"))
+            schema = json.loads(
+                read_text(
+                    "metasynth.schema",
+                    "generative_metadata_format.json"))
             jsonschema.validate(instance=self_dict, schema=schema)
 
         n_rows = self_dict["n_rows"]
@@ -264,7 +283,9 @@ class MetaDataset():
     def formatted(self) -> str:
         """Returns an easy to read formatted string for the MetaDataSet."""
         vars_formatted = "\n".join(
-            f"Column {i + 1}: {var.formatted}" for i, var in enumerate(self.meta_vars))
+            f"Column {i + 1}: {var.formatted}" for i,
+            var in enumerate(
+                self.meta_vars))
         return (
             f"# Rows: {self.n_rows}\n"
             f"# Columns: {self.n_columns}\n\n"

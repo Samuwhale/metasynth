@@ -25,7 +25,10 @@ class BaseDistribution(ABC):
     var_type: str = "unknown"
 
     @classmethod
-    def fit(cls, series: Union[Sequence, pl.Series], *args, **kwargs) -> BaseDistribution:
+    def fit(
+            cls, series: Union[Sequence, pl.Series],
+            *args, **kwargs
+    ) -> BaseDistribution:
         """Fit the distribution to the series.
 
         Parameters
@@ -96,14 +99,14 @@ class BaseDistribution(ABC):
         return {
             "type": "object",
             "properties": {
-                "implements": {"const": cls.implements},
+                    "implements": {"const": cls.implements},
                 "provenance": {"const": cls.provenance},
                 "class_name": {"const": cls.__name__},
                 "parameters": {
-                    "type": "object",
-                    "properties": cls._param_schema(),
-                    "required": list(cls.default_distribution()._param_dict())
-                }
+                        "type": "object",
+                        "properties": cls._param_schema(),
+                        "required": list(cls.default_distribution()._param_dict())
+                        }
             },
             "required": ["implements", "provenance", "class_name", "parameters"]
         }
@@ -153,7 +156,9 @@ class BaseDistribution(ABC):
     def formatted(self) -> str:
         """Returns an easy to read formatted string for the distribution."""
         params_formatted = "\n".join(
-            f"\t- {param}: {value}" for param, value in self._param_dict().items())
+            f"\t- {param}: {value}" for param,
+            value in self._param_dict().items()
+        )
         return (
             f"- Type: {self.implements}\n"
             f"- Provenance: {self.provenance}\n"

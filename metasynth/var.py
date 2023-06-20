@@ -10,8 +10,10 @@ import polars as pl
 
 from metasynth.distribution.base import BaseDistribution
 from metasynth.privacy import BasePrivacy, BasicPrivacy
-from metasynth.provider import (BaseDistributionProvider,
-                                DistributionProviderList)
+from metasynth.provider import (
+    BaseDistributionProvider,
+    DistributionProviderList,
+)
 
 
 class MetaVar():
@@ -44,14 +46,16 @@ class MetaVar():
 
     dtype = "unknown"
 
-    def __init__(self,  # pylint: disable=too-many-arguments
-                 var_type: str,
-                 series: Optional[Union[pl.Series, pd.Series]] = None,
-                 name: Optional[str] = None,
-                 distribution: Optional[BaseDistribution] = None,
-                 prop_missing: Optional[float] = None,
-                 dtype: Optional[str] = None,
-                 description: Optional[str] = None):
+    def __init__(
+            self,  # pylint: disable=too-many-arguments
+            var_type: str,
+            series: Optional[Union[pl.Series, pd.Series]] = None,
+            name: Optional[str] = None,
+            distribution: Optional[BaseDistribution] = None,
+            prop_missing: Optional[float] = None,
+            dtype: Optional[str] = None,
+            description: Optional[str] = None
+    ):
         self.var_type = var_type
         self.prop_missing = prop_missing
         if series is None:
@@ -62,7 +66,8 @@ class MetaVar():
             series = _to_polars(series)
             self.name = series.name
             if prop_missing is None:
-                self.prop_missing = (len(series) - len(series.drop_nulls())) / len(series)
+                self.prop_missing = (
+                    len(series) - len(series.drop_nulls())) / len(series)
             self.dtype = str(series.dtype)
 
         self.series = series
@@ -70,12 +75,18 @@ class MetaVar():
         self.description = description
 
         if self.prop_missing is None:
-            raise ValueError(f"Error while initializing variable {self.name}."
-                             " prop_missing is None.")
+            raise ValueError(
+                f"Error while initializing variable {self.name}."
+                " prop_missing is None."
+            )
 
     @classmethod
-    def detect(cls, series_or_dataframe: Union[pd.Series, pl.Series, pl.DataFrame],
-               description: Optional[str] = None, prop_missing: Optional[float] = None):
+    def detect(cls,
+               series_or_dataframe: Union[pd.Series,
+                                          pl.Series,
+                                          pl.DataFrame],
+               description: Optional[str] = None,
+               prop_missing: Optional[float] = None):
         """Detect variable class(es) of series or dataframe.
 
         Parameters
@@ -108,8 +119,10 @@ class MetaVar():
             var_type = pl.datatypes.dtype_to_py_type(series.dtype).__name__
         except NotImplementedError:
             var_type = pl.datatypes.dtype_to_ffiname(series.dtype)
-        return cls(cls.get_var_type(var_type), series,
-                   description=description, prop_missing=prop_missing)
+        return cls(
+            cls.get_var_type(var_type), series,
+            description=description, prop_missing=prop_missing
+        )
 
     @staticmethod
     def get_var_type(polars_dtype: str) -> str:
@@ -126,7 +139,8 @@ class MetaVar():
         try:
             return convert_dict[polars_dtype]
         except KeyError as exc:
-            raise ValueError(f"Unsupported polars type '{polars_dtype}") from exc
+            raise ValueError(
+                f"Unsupported polars type '{polars_dtype}") from exc
 
     def to_dict(self) -> Dict[str, Any]:
         """Create a dictionary from the variable."""
@@ -147,21 +161,26 @@ class MetaVar():
 
     def __str__(self) -> str:
         """Create a readable string from a variable."""
-        return str({
-            "name": self.name,
-            "description": self.description,
-            "type": self.var_type,
-            "dtype": self.dtype,
-            "prop_missing": self.prop_missing,
-            "distribution": str(self.distribution),
-        })
+        return str(
+            {
+                "name": self.name,
+                "description": self.description,
+                "type": self.var_type,
+                "dtype": self.dtype,
+                "prop_missing": self.prop_missing,
+                "distribution": str(self.distribution),
+            }
+        )
 
-    def fit(self,  # pylint: disable=too-many-arguments
+    def fit(
+            self,  # pylint: disable=too-many-arguments
             dist: Optional[Union[str, BaseDistribution, type]] = None,
-            dist_providers: Union[str, type, BaseDistributionProvider] = "builtin",
+            dist_providers: Union[str, type,
+                                  BaseDistributionProvider] = "builtin",
             privacy: BasePrivacy = BasicPrivacy(),
             unique: Optional[bool] = None,
-            fit_kwargs: Optional[dict] = None):
+            fit_kwargs: Optional[dict] = None
+    ):
         """Fit distributions to the data.
 
         If multiple distributions are available for the current data type,
@@ -189,12 +208,16 @@ class MetaVar():
             Extra options for distributions during the fitting stage.
         """
         if self.series is None:
-            raise ValueError("Cannot fit distribution if we don't have the"
-                             "original data.")
+            raise ValueError(
+                "Cannot fit distribution if we don't have the"
+                "original data."
+            )
 
         provider_list = DistributionProviderList(dist_providers)
-        self.distribution = provider_list.fit(self.series, self.var_type, dist, privacy, unique,
-                                              fit_kwargs)
+        self.distribution = provider_list.fit(
+            self.series, self.var_type, dist, privacy, unique,
+            fit_kwargs
+        )
 
     def draw(self) -> Any:
         """Draw a random item for the variable in whatever type is required."""
@@ -228,11 +251,13 @@ class MetaVar():
         return pl.Series(value_list)
 
     @classmethod
-    def from_dict(cls,
-                  var_dict: Dict[str, Any],
-                  distribution_providers: Union[
-                      None, str, type[BaseDistributionProvider],
-                      BaseDistributionProvider] = None) -> MetaVar:
+    def from_dict(
+            cls,
+            var_dict: Dict[str, Any],
+            distribution_providers: Union[
+                None, str, type[BaseDistributionProvider],
+                BaseDistributionProvider] = None
+    ) -> MetaVar:
         """Restore variable from dictionary.
 
         Parameters
@@ -264,7 +289,8 @@ class MetaVar():
         """Returns an easy to read formatted string for the MetaVar."""
         description = f'Description: "{self.description}"\n' if self.description else ""
         distribution_formatted = "\n".join(
-            "\t" + line for line in self.distribution.formatted.split("\n"))
+            "\t" + line for line in self.distribution.formatted.split("\n")
+        )
         return (
             f'"{self.name}"\n'
             f'{description}'
@@ -279,8 +305,10 @@ def _to_polars(series: Union[pd.Series, pl.Series]) -> pl.Series:
     if isinstance(series, pl.Series):
         return series
     if len(series.dropna()) == 0:
-        series = pl.Series(name=series.name,
-                           values=[None for _ in range(len(series))])
+        series = pl.Series(
+            name=series.name,
+            values=[None for _ in range(len(series))]
+        )
     else:
         series = pl.Series(series)
     return series
