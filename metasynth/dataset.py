@@ -274,7 +274,7 @@ class MetaDataset():
         return pl.DataFrame(synth_dict)
 
     def preview_output(self):
-        """Prints the MetaDataSet as it would be output to JSON."""
+        """Print the MetaDataSet as it would be output to JSON."""
         pretty_data = _jsonify(self.to_dict())
         output = json.dumps(pretty_data, indent=4)
         print(output)
