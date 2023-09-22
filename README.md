@@ -1,3 +1,13 @@
+# ⚠️ THIS FORK IS NOW ARCHIVED ⚠️
+**This was a temporary fork, and was only used for a short while (while I was waiting to get access to the main repository). It is now archived.**
+
+---
+
+---
+
+---
+
+
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/metasynth)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sodascience/metasynth/HEAD?labpath=examples%2Fgetting_started.ipynb)
 [![Google Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sodascience/metasynth/blob/main/examples/getting_started.ipynb)
